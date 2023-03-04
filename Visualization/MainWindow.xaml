@@ -1,0 +1,47 @@
+﻿<Window x:Class="Visualization.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:models="clr-namespace:DataManager.Models;assembly=DataManager"
+        mc:Ignorable="d"
+        Title="Financial Parser" Width="1600" Height="900">
+    <Window.DataContext>
+        <models:Transaction/>
+    </Window.DataContext>
+    
+    <Grid Name="Main">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="19*"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <Button Grid.Row="0" Grid.Column="0" Click="OpenFileButton_OnClick">Open file</Button>
+        <Button Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Click="OpenCategoryButton_OnClick">Open category</Button>
+
+        <DataGrid Grid.Column="0" Grid.Row="1" Name="Transactions" AutoGenerateColumns="False">
+            <DataGrid.Resources>
+                <DataTemplate DataType="{x:Type models:Transaction}">
+                    <ComboBox ItemsSource="{Binding PossibleCategories}" DisplayMemberPath="Name" SelectedItem="{Binding Category, Mode=TwoWay}" SelectionChanged="Selector_OnSelected"></ComboBox>
+                </DataTemplate>
+            </DataGrid.Resources>
+            
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date" Binding="{Binding Date}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Account" Binding="{Binding Account}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Counterparty" Binding="{Binding Counterparty}"></DataGridTextColumn>
+                <DataGridTemplateColumn Header="Category">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ContentPresenter Content="{Binding }"></ContentPresenter>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Debit/Credit" Binding="{Binding DebitCredit}"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net7.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <UseWPF>true</UseWPF>
+        <LangVersion>11</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DataManager\DataManager.csproj" />
+    </ItemGroup>
+
+</Project>
