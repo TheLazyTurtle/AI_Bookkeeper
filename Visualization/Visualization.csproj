@@ -9,11 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\DataManager\DataManager.csproj" />
+      <ProjectReference Include="..\ML_algo\ML_algo.csproj" />
     </ItemGroup>
 
 </Project>

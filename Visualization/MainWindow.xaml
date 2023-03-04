@@ -19,13 +19,25 @@
             <RowDefinition Height="19*"></RowDefinition>
         </Grid.RowDefinitions>
         
-        <Button Grid.Row="0" Grid.Column="0" Click="OpenFileButton_OnClick">Open file</Button>
-        <Button Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Click="OpenCategoryButton_OnClick">Open category</Button>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Click="OpenFileButton_OnClick">Import Data</Button>
+            <Button Grid.Column="1" Click="TrainModel_OnClick">Train Model</Button>
+            <Button Grid.Column="2" Click="PredictCategory_OnClick">Fill Selected</Button>
+            <Button Grid.Column="3" Click="PredictCategoryOnAllEmpty_OnClick">Fill All Empty</Button>
+            <Button Grid.Column="4" Click="OpenCategoryButton_OnClick">Open Category</Button>
+        </Grid>
 
         <DataGrid Grid.Column="0" Grid.Row="1" Name="Transactions" AutoGenerateColumns="False">
             <DataGrid.Resources>
                 <DataTemplate DataType="{x:Type models:Transaction}">
-                    <ComboBox ItemsSource="{Binding PossibleCategories}" DisplayMemberPath="Name" SelectedItem="{Binding Category, Mode=TwoWay}" SelectionChanged="Selector_OnSelected"></ComboBox>
+                    <ComboBox ItemsSource="{Binding PossibleCategories}" DisplayMemberPath="Name" SelectedItem="{Binding Category}" DropDownClosed="ComboBox_OnDropDownClosed"></ComboBox>
                 </DataTemplate>
             </DataGrid.Resources>
             
@@ -33,6 +45,9 @@
                 <DataGridTextColumn Header="Date" Binding="{Binding Date}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Account" Binding="{Binding Account}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Counterparty" Binding="{Binding Counterparty}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Debit/Credit" Binding="{Binding DebitCredit}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Amount" Binding="{Binding Amount}"></DataGridTextColumn>
                 <DataGridTemplateColumn Header="Category">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -40,7 +55,8 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Debit/Credit" Binding="{Binding DebitCredit}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Fill Type" Binding="{Binding CategorySelection}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Description" Binding="{Binding Notifications}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

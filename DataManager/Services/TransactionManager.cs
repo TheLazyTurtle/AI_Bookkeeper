@@ -43,4 +43,9 @@ public static class TransactionManager
         
         return data;
     }
+
+    public static IEnumerable<Transaction> GetTransactionsWithCategory()
+    {
+        return Transactions.Where(t => t.CategoryId != null);
+    }
 }

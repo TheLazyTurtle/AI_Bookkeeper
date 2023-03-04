@@ -15,4 +15,8 @@
       </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\ML_algo\ML_algo.csproj" />
+    </ItemGroup>
+
 </Project>

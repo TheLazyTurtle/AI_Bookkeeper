@@ -21,6 +21,7 @@ public static class CsvParser
                 Amount = float.Parse(item[6], NumberStyles.Currency),
                 TransactionType = item[7],
                 Notifications = item[8],
+                CategorySelection = CategorySelection.HandFill
             });
     }
     

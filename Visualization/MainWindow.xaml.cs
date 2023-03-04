@@ -1,11 +1,13 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using DataManager.Adapters;
 using DataManager.Models;
 using DataManager.Services;
+using Microsoft.ML;
 using Microsoft.Win32;
+using ML_algo;
 
 namespace Visualization;
 
@@ -48,12 +50,38 @@ public partial class MainWindow
         _categoryManagerScreen.Show();
     }
 
-    private async void Selector_OnSelected(object sender, RoutedEventArgs args)
+    private async void ComboBox_OnDropDownClosed(object sender, EventArgs eventArgs)
     {
         var category = (Category)((ComboBox)sender).SelectedItem;
         var transaction = (Transaction)((FrameworkElement)sender).DataContext;
         var actual = TransactionManager.Transactions.First(t => t.Equals(transaction));
-        actual.Category = category;
+        actual.SetCategory(category, CategorySelection.HandFill);
         await TransactionManager.UpdateTransaction(actual);
+    }
+
+    private void TrainModel_OnClick(object sender, RoutedEventArgs e)
+    {
+        PredictionManager.Retrain();
+    }
+
+    private async void PredictCategory_OnClick(object sender, RoutedEventArgs e)
+    {
+        var transaction = (Transaction)Transactions.SelectedItem;
+        var category = PredictionManager.Predict(transaction);
+        
+        var actualTransaction = TransactionManager.Transactions.First(t => t.Equals(transaction));
+        actualTransaction.SetCategory(category, CategorySelection.AutoFill);
+        await TransactionManager.UpdateTransaction(actualTransaction);
+    }
+
+    private async void PredictCategoryOnAllEmpty_OnClick(object sender, RoutedEventArgs e)
+    {
+        var transactions = TransactionManager.Transactions.Where(t => t.CategoryId == null);
+        foreach (var transaction in transactions)
+        {
+            var category = PredictionManager.Predict(transaction);
+            transaction.SetCategory(category, CategorySelection.AutoFill);
+            await TransactionManager.UpdateTransaction(transaction);
+        }
     }
 }

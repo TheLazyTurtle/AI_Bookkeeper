@@ -106,6 +106,7 @@ public static class CategoryManager
     
     private static void RemoveFromObservableList(Category category)
     {
+        Categories.Remove(category);
         if (category.Type == TransactionType.Income)
         {
             Incoming.Remove(category);

@@ -1,11 +1,24 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 using DataManager.Services;
 
 namespace DataManager.Models;
 
-public class Transaction
+public enum CategorySelection
 {
+    HandFill,
+    AutoFill,
+    NotSet
+}
+
+public class Transaction: INotifyPropertyChanged
+{
+    [NotMapped] private CategorySelection _categorySelection = CategorySelection.NotSet;
+    [NotMapped] private Category? _category;
+    [NotMapped] private int? _categoryId;
+    
     [Key]
     public int TransactionId { get; set; }
     public DateTime Date { get; set; }
@@ -16,9 +29,37 @@ public class Transaction
     public float Amount { get; set; }
     public string TransactionType { get; set; }
     public string Notifications { get; set; }
-    public int? CategoryId { get; set; }
-    [NotMapped]
-    public Category? Category { get; set; }
+
+    public CategorySelection CategorySelection
+    {
+        get => _categorySelection;
+        set
+        {
+            _categorySelection = value;
+            OnPropertyChanged();
+        }
+    }
+    
+    [NotMapped] public Category? Category
+    {
+        get => _category;
+        set
+        {
+            _category = value;
+            OnPropertyChanged();
+        } 
+    }
+
+    public int? CategoryId
+    {
+        get => _categoryId;
+        set
+        {
+            _categoryId = value;
+            OnPropertyChanged();
+        }
+    }
+
     [NotMapped]
     public IEnumerable<Category> PossibleCategories => CategoryManager.GetCategoriesByType(DebitCredit);
     
@@ -32,5 +73,27 @@ public class Transaction
                Math.Abs(other.Amount - Amount) < 0.001 &&
                other.TransactionType == TransactionType &&
                other.Notifications == Notifications;
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
+    }
+    
+    public void SetCategory(Category? category, CategorySelection categorySelection)
+    {
+        Category = category;
+        CategoryId = category?.Id ?? null;
+        CategorySelection = category == null ? CategorySelection.NotSet : categorySelection;
     }
 }
