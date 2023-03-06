@@ -11,7 +11,6 @@ public static class CategoryManager
     private static ObservableCollection<Category> Expense { get; } 
     public static ObservableCollection<Category> Categories { get; }
 
-
     static CategoryManager()
     {
         Incoming = new ObservableCollection<Category>(Db.Categories.Where(c => c.Type == TransactionType.Income).ToList());

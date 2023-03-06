@@ -10,18 +10,22 @@ public static class PredictionManager
     public static void Retrain()
     {
         var mlContext = new MLContext();
-        mlContext.Model.Load("MLModel2.zip", out var model);
+        if (File.Exists(MLModel2.MLNetModelPath))
+            mlContext.Model.Load(MLModel2.MLNetModelPath, out var model);
         
         var trainingData = TransactionManager.GetTransactionsWithCategory().ToList();
         var adaptedTrainingData = trainingData.Select(TransactionMlModelAdapter.Adapt);
         var view = mlContext.Data.LoadFromEnumerable(adaptedTrainingData);
         var pipeline = MLModel2.RetrainPipeline(mlContext, view);
         
-        mlContext.Model.Save(pipeline, view.Schema, "MLModel2.zip");
+        mlContext.Model.Save(pipeline, view.Schema, MLModel2.MLNetModelPath);
     }
     
     public static Category Predict(Transaction transaction)
     {
+        if (!File.Exists(MLModel2.MLNetModelPath))
+            Retrain();
+            
         var adaptedTransaction = TransactionMlModelAdapter.Adapt(transaction);
         var predictionOutput = MLModel2.Predict(adaptedTransaction);
         

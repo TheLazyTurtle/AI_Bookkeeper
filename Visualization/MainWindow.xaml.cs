@@ -2,12 +2,9 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using DataManager.Adapters;
 using DataManager.Models;
 using DataManager.Services;
-using Microsoft.ML;
 using Microsoft.Win32;
-using ML_algo;
 
 namespace Visualization;
 
@@ -23,6 +20,7 @@ public partial class MainWindow
         InitializeComponent();
         
         Transactions.ItemsSource = TransactionManager.Transactions;
+        new ReportWindow().Show();
     }
 
     private async void OpenFileButton_OnClick(object sender, RoutedEventArgs e)
