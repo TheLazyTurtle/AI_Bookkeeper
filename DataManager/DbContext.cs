@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataManager;
 
-internal class DbContext: Microsoft.EntityFrameworkCore.DbContext
+internal sealed class DbContext: Microsoft.EntityFrameworkCore.DbContext
 {
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<Category> Categories { get; set; }
@@ -14,6 +14,7 @@ internal class DbContext: Microsoft.EntityFrameworkCore.DbContext
         const Environment.SpecialFolder folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
         DbPath = Path.Join(path, "transactions.sqlite");
+        Database.EnsureCreated();
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

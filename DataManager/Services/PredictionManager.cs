@@ -30,10 +30,6 @@ public static class PredictionManager
         var predictionOutput = MLModel2.Predict(adaptedTransaction);
         
         var categoryId = predictionOutput.PredictedLabel;
-
-        if (transaction.Category != null)
-        {
-        }
         
         return CategoryManager.Categories.First(c => c.Id == categoryId);
     }
