@@ -1,7 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using DataManager.Models;
 using DataManager.Services;
 
@@ -12,33 +12,55 @@ public partial class CategoryManagerScreen
     public CategoryManagerScreen()
     {
         InitializeComponent();
-        
-        Categories.CellEditEnding += OnCellEdit;
-        Categories.DataContext = CategoryManager.Categories;
-        Categories.ItemsSource = CategoryManager.Categories;
     }
 
-    private async void OnCellEdit(object? sender, DataGridCellEditEndingEventArgs args)
+    private async void IncomeDataGrid_OnRowEditEnding(object? sender, DataGridRowEditEndingEventArgs e)
     {
-        var category = (Category)args.Row.Item;
+        if (e.EditAction != DataGridEditAction.Commit) 
+            return;
+
+        if (e.Row.Item is not Category item)
+            return;
         
-        if (args.EditingElement is TextBox t)
-        {
-            var text = t.Text;
-            category.Name = text;
-        }
-        else if (args.EditingElement is ComboBox c)
-        {
-            var index = c.SelectedIndex;
-            category.Type = (TransactionType)index;
-        }
-        
-        await CategoryManager.AddOrUpdate(category);
+        item.Type = TransactionType.Income;
     }
 
-    private async void OnClick_RemoveSelected(object sender, RoutedEventArgs e)
+    private async void ExpenseDataGrid_OnRowEditEnding(object? sender, DataGridRowEditEndingEventArgs e)
     {
-        var category = (Category)Categories.SelectedItem;
-        await CategoryManager.DeleteCategory(category);
+        if (e.EditAction != DataGridEditAction.Commit) 
+            return;
+
+        if (e.Row.Item is not Category item) 
+            return;
+        
+        item.Type = TransactionType.Expense;
+    }
+
+    private async void DataGrid_PreviewExecuted(object sender, ExecutedRoutedEventArgs e)
+    {
+        if (e.Command != ApplicationCommands.Delete) 
+            return;
+        
+        if (sender is not DataGrid dataGrid)
+            return;
+
+        foreach (var item in dataGrid.SelectedItems)
+        {
+            if (item is Category category)
+                await CategoryManager.DeleteCategory(category);
+        }
+    }
+
+    private async void Save_OnClick(object sender, RoutedEventArgs e)
+    {
+        foreach (var income in CategoryManager.Incoming)
+        {
+            await CategoryManager.AddOrUpdate(income);
+        }
+        
+        foreach (var expense in CategoryManager.Expense)
+        {
+            await CategoryManager.AddOrUpdate(expense);
+        }
     }
 }
