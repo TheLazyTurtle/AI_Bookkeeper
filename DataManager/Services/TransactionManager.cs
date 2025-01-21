@@ -32,6 +32,33 @@ public static class TransactionManager
         }
     }
 
+    public static List<Transaction> GetTransactionsOfYear(int year)
+    {
+        return Transactions.Where(t => t.Date.Year == year).ToList();
+    }
+
+    public static ObservableCollection<int> GetYears()
+    {
+        var dates = Db.Transactions
+            .GroupBy(x => x.Date.Year)
+            .Select(x => x.Key)
+            .ToList()
+            .OrderDescending()
+            .ToList();
+        
+        return new ObservableCollection<int>(dates);
+    }
+
+    public static int GetLatestYear()
+    {
+        return Db.Transactions
+            .GroupBy(x => x.Date.Year)
+            .Select(x => x.Key)
+            .ToList()
+            .OrderDescending()
+            .FirstOrDefault();
+    }
+
     private static IEnumerable<Transaction> GetTransactions()
     {
         var data = Db.Transactions;

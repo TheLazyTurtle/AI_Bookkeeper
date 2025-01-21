@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,15 +16,16 @@ namespace Visualization;
 public partial class MainWindow
 {
     private CategoryManagerScreen? _categoryManagerScreen;
+    public IReadOnlyList<int> TrackedTransactionYears { get; } = TransactionManager.GetYears();
+    public ObservableCollection<Transaction> Transactions { get; } = new();
+    public Transaction SelectedTransaction { get; set; }
+    public int SelectedTransactionYear { get; set; } = TransactionManager.GetLatestYear();
     
     public MainWindow()
     {
         InitializeComponent();
-        
-        Transactions.ItemsSource = TransactionManager.Transactions;
-        new ReportWindow().Show();
     }
-
+    
     private async void OpenFileButton_OnClick(object sender, RoutedEventArgs e)
     {
         var dialog = new OpenFileDialog
@@ -64,7 +67,7 @@ public partial class MainWindow
 
     private async void PredictCategory_OnClick(object sender, RoutedEventArgs e)
     {
-        var transaction = (Transaction)Transactions.SelectedItem;
+        var transaction = SelectedTransaction;
         var category = PredictionManager.Predict(transaction);
         
         var actualTransaction = TransactionManager.Transactions.First(t => t.Equals(transaction));
@@ -81,5 +84,20 @@ public partial class MainWindow
             transaction.SetCategory(category, CategorySelection.AutoFill);
             await TransactionManager.UpdateTransaction(transaction);
         }
+    }
+
+    private void YearChanged(object sender, SelectionChangedEventArgs e)
+    {
+        Transactions.Clear();
+        var transactions = TransactionManager.GetTransactionsOfYear(SelectedTransactionYear);
+        foreach (var transaction in transactions)
+        {
+            Transactions.Add(transaction);
+        }
+    }
+
+    private void OpenReportButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        new ReportWindow(SelectedTransactionYear).Show();
     }
 }

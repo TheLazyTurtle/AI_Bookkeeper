@@ -7,21 +7,21 @@ public static class ReportManager
 {
     private static readonly DbContext Db = new();
     
-    public static IEnumerable<Report> GetCategoriesWithTotalAmount()
+    public static IEnumerable<Report> GetCategoriesWithTotalAmount(int year)
     {
         var categoriesWithTransactions = Db.Categories.Include(c => c.Transactions);
         var reports = categoriesWithTransactions.Select(c => new Report {
             Name = c.Name,
-            Amount = c.Transactions.Sum(t => t.Amount),
+            Amount = c.Transactions.Where(x => x.Date.Year == year).Sum(t => t.Amount),
             Type = c.Type
         }).ToList();
 
         return reports;
     }
     
-    public static IEnumerable<Report> GetTotalAmountForTransactionType()
+    public static IEnumerable<Report> GetTotalAmountForTransactionType(int year)
     {
-        var reports = GetCategoriesWithTotalAmount().ToList();
+        var reports = GetCategoriesWithTotalAmount(year).ToList();
         var income = new Report
         {
             Name = "Total",

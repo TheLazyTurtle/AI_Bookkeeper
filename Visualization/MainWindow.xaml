@@ -5,58 +5,64 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:models="clr-namespace:DataManager.Models;assembly=DataManager"
         mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="Financial Parser" Width="1600" Height="900">
-    <Window.DataContext>
-        <models:Transaction/>
-    </Window.DataContext>
-    
-    <Grid Name="Main">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="19*"></RowDefinition>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="19*"/>
         </Grid.RowDefinitions>
         
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"></ColumnDefinition>
-                <ColumnDefinition Width="1*"></ColumnDefinition>
-                <ColumnDefinition Width="1*"></ColumnDefinition>
-                <ColumnDefinition Width="1*"></ColumnDefinition>
-                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Click="OpenFileButton_OnClick">Import Data</Button>
-            <Button Grid.Column="1" Click="TrainModel_OnClick">Train Model</Button>
-            <Button Grid.Column="2" Click="PredictCategory_OnClick">Fill Selected</Button>
-            <Button Grid.Column="3" Click="PredictCategoryOnAllEmpty_OnClick">Fill All Empty</Button>
-            <Button Grid.Column="4" Click="OpenCategoryButton_OnClick">Open Category</Button>
+            <Button Grid.Column="0" Click="OpenFileButton_OnClick" Content="Import Data"/>
+            <Button Grid.Column="1" Click="TrainModel_OnClick" Content="Train Model"/>
+            <Button Grid.Column="2" Click="PredictCategory_OnClick" Content="Fill Selected"/>
+            <Button Grid.Column="3" Click="PredictCategoryOnAllEmpty_OnClick" Content="Fill All Empty"/>
+            <Button Grid.Column="4" Click="OpenCategoryButton_OnClick" Content="Open Category"/>
+            <Button Grid.Column="5" Click="OpenReportButton_OnClick" Content="Open report"/>
+            <StackPanel Grid.Column="6" Orientation="Horizontal">
+                <ComboBox ItemsSource="{Binding TrackedTransactionYears}" 
+                          SelectedItem="{Binding SelectedTransactionYear}"
+                          SelectionChanged="YearChanged"/>
+            </StackPanel>
         </Grid>
 
-        <DataGrid Grid.Column="0" Grid.Row="1" Name="Transactions" AutoGenerateColumns="False">
+        <DataGrid Grid.Row="1" AutoGenerateColumns="False" 
+                    SelectedItem="{Binding SelectedTransaction, Mode=TwoWay}" 
+                    ItemsSource="{Binding Transactions}">
             <DataGrid.Resources>
                 <DataTemplate DataType="{x:Type models:Transaction}">
-                    <ComboBox ItemsSource="{Binding PossibleCategories}" DisplayMemberPath="Name" SelectedItem="{Binding Category}" DropDownClosed="ComboBox_OnDropDownClosed"></ComboBox>
+                    <ComboBox ItemsSource="{Binding PossibleCategories}" 
+                              DisplayMemberPath="Name" 
+                              SelectedItem="{Binding Category}" 
+                              DropDownClosed="ComboBox_OnDropDownClosed"/>
                 </DataTemplate>
             </DataGrid.Resources>
             
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Date" Binding="{Binding Date}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Account" Binding="{Binding Account}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Counterparty" Binding="{Binding Counterparty}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Debit/Credit" Binding="{Binding DebitCredit}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Amount" Binding="{Binding Amount}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat=d-M-yyyy}"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Debit/Credit" Binding="{Binding DebitCredit}"/>
+                <DataGridTextColumn Header="Amount" Binding="{Binding Amount}"/>
                 <DataGridTemplateColumn Header="Category">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ContentPresenter Content="{Binding }"></ContentPresenter>
+                            <ContentPresenter Content="{Binding }"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Fill Type" Binding="{Binding CategorySelection}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Description" Binding="{Binding Notifications}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Fill Type" Binding="{Binding CategorySelection}"/>
+                <DataGridTextColumn Header="Description" Binding="{Binding Notifications}"/>
+                <DataGridTextColumn Header="Counterparty" Binding="{Binding Counterparty}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
